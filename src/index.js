@@ -18,8 +18,9 @@ app.use(express.static(publicDirectoryPath));
 
 io.on('connection', (socket) => {
   console.log('New web socket connection');
-
+  // To a new member
   socket.emit('message', 'Welcome!');
+  // Only to other members.
   socket.broadcast.emit('message', 'A new member has joined.')
 
   socket.on('sendMessage', (message, callback) => {
@@ -31,8 +32,9 @@ io.on('connection', (socket) => {
     callback();
   })
   
-    socket.on('sendLocation', (coords) => {
-      io.emit('message', `https://google.com/maps?q=${coords.lat},${coords.long}`)
+    socket.on('sendLocation', (coords, callback) => {
+      io.emit('message', (`https://google.com/maps?q=${coords.lat},${coords.long}`))
+      callback()
     })
 
   socket.on('disconnect', () => {
