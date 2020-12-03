@@ -1,0 +1,9 @@
+body {
+  margin: 0 auto;
+  width: 70%;
+  background-color: rgb(195, 218, 216);
+}
+
+#send-location {
+  margin-top: 20px;
+}
