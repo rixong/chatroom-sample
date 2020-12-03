@@ -6,23 +6,33 @@ const $messageFormInput = $messageForm.querySelector('input');
 const $messageFormButton = $messageForm.querySelector('button');
 const $sendLocationButton = document.getElementById('location-button')
 const $messages = document.getElementById('messages')
+const $location = document.getElementById('location')
 
 // Templates
 const messageTemplate = document.getElementById('message-template').innerHTML
+const locationTemplate = document.getElementById('location-template').innerHTML
 
 socket.on('message', (message) => {
-  console.log(message);
+  // console.log(message);
   const html = Mustache.render(messageTemplate, {
     message
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
 
+socket.on('locationMessage', (url) => {
+  const html = Mustache.render(locationTemplate, {
+    url
+  })
+  $location.insertAdjacentHTML('beforeend', html)
+  // console.log(url);
+})
+
 $messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   // $messageFormInput.disabled = true
   $messageFormButton.disabled = true
-  
+
   socket.emit('sendMessage', $messageFormInput.value, (error) => {
     // $messageFormInput.disabled = false
     $messageFormButton.disabled = false
