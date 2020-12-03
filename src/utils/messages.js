@@ -4,10 +4,18 @@ const generateMessage = (text) => {
   // const now = moment();
   return {
     text,
-    createdAt: moment().format('h:m:s a')
+    createdAt: moment().format('h:mm:ss a')
+  }
+}
+
+const generateLocationMessage = (url) => {
+  return {
+    url,
+    createdAt: moment().format('h:mm:ss a')
   }
 }
 
 module.exports = {
-  generateMessage
+  generateMessage,
+  generateLocationMessage
 }
