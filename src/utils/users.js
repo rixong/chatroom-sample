@@ -18,45 +18,41 @@ const addUser = ({id, username, room}) => {
   }
   const user = {id, username, room};
   users.push(user);
-  return user;
+  return {user};
 }
 
 const removeUser = (id) => {
   const idx = users.findIndex((user) => user.id === id)
   if(idx !== -1){
-    return users.slice(idx, 1)[0]
+    return users.splice(idx, 1)[0]
   }
 }
 
 const getUser = (id) => {
-  const idx = users.findIndex((user) => user.id === id)
-  if(idx !== -1){
-    return users[idx]
-  }
+  return users.find((user) => user.id === id)
 }
 
 const getUsersInRoom = (room) => {
-  const users = user.filter((user) => user.room === room)
-  return users;
+  return users.filter((user) => user.room === room)
 }
 
-
-
-// addUser({
-//   id:2,
+// const rick = {
+//   id: 1,
 //   username: 'Rick',
-//   room: "Austin"
-// })
+//   room: 'Austin'
+// }
 
-// addUser({
-//   id:2,
-//   username: 'Bob',
-//   room: "Austin"
-// })
+// const jenny = {
+//   id: 2,
+//   username: 'Jenny',
+//   room: 'Austin'
+// }
 
-// const res = {
-//   id:2,
-//   username: 'Bob',
-//   room: "Austin"
-// };
+// console.log(addUser(rick))
+// console.log(addUser(jenny))
 
+// console.log(users)
+
+// console.log(removeUser(2))
+
+module.exports = {addUser, removeUser, getUser, getUsersInRoom}

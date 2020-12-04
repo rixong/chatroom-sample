@@ -6,38 +6,44 @@ const $messageFormInput = $messageForm.querySelector('input');
 const $messageFormButton = $messageForm.querySelector('button');
 const $sendLocationButton = document.getElementById('location-button')
 const $messages = document.getElementById('messages')
-// const $location = document.getElementById('location')
+// const $users = document.getElementById('sidebar')
 
 // Templates
 const messageTemplate = document.getElementById('message-template').innerHTML
 const locationTemplate = document.getElementById('location-template').innerHTML
+const sidebarTemplate = document.getElementById('sidebar-template').innerHTML
 
-const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true});
-console.log(username, room)
-socket.on('message', (message) => {
-  // console.log(message);
+// Grab the query from submitted URL (from join page).
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+socket.on('roomData', ({ room, users }) => {
+  html = Mustache.render(sidebarTemplate, { room, users });
+  document.getElementById('sidebar').innerHTML = html
+})
+
+socket.on('message', ({ username, text, createdAt }) => {
   const html = Mustache.render(messageTemplate, {
-    message: message.text,
-    createdAt: message.createdAt
+    username,
+    message: text,
+    createdAt
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
 
-socket.on('locationMessage', (locationMessage) => {
+socket.on('locationMessage', ({ username, url, createdAt }) => {
   const html = Mustache.render(locationTemplate, {
-    url: locationMessage.url,
-    createdAt: locationMessage.createdAt
+    username,
+    url,
+    createdAt
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  // $messageFormInput.disabled = true
   $messageFormButton.disabled = true
 
   socket.emit('sendMessage', $messageFormInput.value, (error) => {
-    // $messageFormInput.disabled = false
     $messageFormButton.disabled = false
     $messageFormInput.value = '';
     $messageFormInput.focus();
@@ -65,20 +71,10 @@ $sendLocationButton.addEventListener('click', () => {
   });
 });
 
-socket.emit('join', {username, room});
-
-
-
-
-
-// const button = document.querySelector('#increment').addEventListener('click', () => {
-//   // console.log('Clicked');
-//   socket.emit('increment')
-// })
-
-// const display = document.querySelector('#display');
-// socket.on('countUpdated', (count) => {
-//   // console.log("The count is updated.", count);
-//   display.textContent = count;
-// })
+socket.emit('join', { username, room }, (error) => {
+  if (error) {
+    alert(error)
+    location.href = './'
+  }
+});
 
