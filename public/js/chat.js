@@ -16,6 +16,27 @@ const sidebarTemplate = document.getElementById('sidebar-template').innerHTML
 // Grab the query from submitted URL (from join page).
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
+const autoscroll = () => {
+  // Get new message
+  const $newMessage = $messages.lastElementChild
+  // Get the height of new message
+  const newMessageStyles = getComputedStyle($newMessage)
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+  const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+  // Visible height
+  const visibleHeigth = $messages.offsetHeight;
+
+  //Height of message container
+  const containerHeigth = $messages.scrollHeight
+
+  // How far have I scrolled down
+  const scrollOffset = $messages.scrollTop + visibleHeigth
+
+  if (containerHeigth - newMessageHeight <= scrollOffset){
+    $messages.scrollTop = $messages.scrollHeight
+  }
+}
+
 socket.on('roomData', ({ room, users }) => {
   html = Mustache.render(sidebarTemplate, { room, users });
   document.getElementById('sidebar').innerHTML = html
@@ -28,6 +49,7 @@ socket.on('message', ({ username, text, createdAt }) => {
     createdAt
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoscroll()
 })
 
 socket.on('locationMessage', ({ username, url, createdAt }) => {
@@ -37,6 +59,7 @@ socket.on('locationMessage', ({ username, url, createdAt }) => {
     createdAt
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoscroll()
 })
 
 $messageForm.addEventListener('submit', (e) => {
@@ -50,7 +73,7 @@ $messageForm.addEventListener('submit', (e) => {
     if (error) {
       return console.log(error)
     }
-    console.log('Message delivered.');
+    // console.log('Message delivered.');
   });
 })
 
@@ -66,7 +89,7 @@ $sendLocationButton.addEventListener('click', () => {
         lat: position.coords.latitude,
         long: position.coords.longitude
       }, () => {
-        console.log('Location delivered.')
+        // console.log('Location delivered.')
       })
   });
 });
